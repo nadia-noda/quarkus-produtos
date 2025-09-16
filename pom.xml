@@ -63,11 +63,6 @@
 
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-jackson</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-h2</artifactId>
         </dependency>
 
@@ -88,7 +83,40 @@
             <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-oidc</artifactId>
+        </dependency>
 
+       <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-jwt</artifactId>
+        </dependency>
+
+        <!-- KEYCLOAK-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-keycloak-admin-rest-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-jackson</artifactId>
+        </dependency>
+
+        <!-- KEYCLOAK CLIENTE
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+        </dependency>
+    -->
+
+<!-- CRYPTOGRAFIA
+    <dependency>
+    <groupId>org.mindrot</groupId>
+    <artifactId>jbcrypt</artifactId>
+    <version>${jbcrypt.version}</version>
+</dependency>
+-->
     </dependencies>
 
     <build>

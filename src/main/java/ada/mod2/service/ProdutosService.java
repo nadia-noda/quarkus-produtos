@@ -7,7 +7,7 @@ import ada.mod2.exception.NomeDeProdutoJaExiste;
 import ada.mod2.model.Produtos;
 import ada.mod2.repository.ProdutosRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.core.Response;
+
 
 import java.util.List;
 import java.util.Optional;

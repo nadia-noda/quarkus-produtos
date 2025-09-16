@@ -1,7 +1,12 @@
 package ada.mod2.controller;
 import ada.mod2.DTO.ProdutosDTO;
 import ada.mod2.model.Produtos;
+
 import ada.mod2.service.ProdutosService;
+
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -15,17 +20,36 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.RestPath;
+import org.keycloak.admin.client.Keycloak;
 
-import java.security.PublicKey;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.Claims;
+
 import java.util.List;
 
 
 @Tag(name = "Produtos", description = "Gerenciador de Produtos")
 @Path("/produtos")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@RequestScoped
 
 public class ProdutosController {
+
+    @Inject
+    JsonWebToken jwt;
+
+    @Inject
+    Keycloak keycloak;
+
+    //@Inject
+    //KeycloakRolesResource keycloakService;
+
+    //@Inject
+    //UsuariosKeycloak usuariosKeycloak;
+
+    @Inject
+    @Claim(standard = Claims.upn)
+    String userId;
 
     //@Inject
     private final ProdutosService produtosService;
@@ -36,16 +60,23 @@ public class ProdutosController {
     //1. Criar produto
     @POST
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     public Response criarProdutos(@Valid ProdutosDTO produtosDTO){
         Produtos produtos = produtosService.criar(produtosDTO);
         if (produtos == null){
             return Response.status(Response.Status.BAD_REQUEST).entity(produtos).build();
         }
+        System.out.println("Criado por " + userId);
         return Response.status(Response.Status.CREATED).entity(produtos).build();
     }
 
     //2. Listar produtos
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin","user"})
+
     public Response listarProdutos(){
         List<ProdutosDTO> produtos = produtosService.consultarTodos();
         return  Response
@@ -57,6 +88,8 @@ public class ProdutosController {
     // 3. Buscar por id
     @Path("/{id}")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"admin","user"})
     public Response listarPorId(@RestPath Long id){
         return Response
                 .status(Response.Status.OK)
@@ -68,6 +101,9 @@ public class ProdutosController {
     @Path("/{id}")
     @PUT
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     public Response atualizarProdutos(@RestPath Long id, @Valid ProdutosDTO produtosDTO){
         produtosService.atualizar(id,produtosDTO);
         return Response
@@ -80,6 +116,7 @@ public class ProdutosController {
     @Path("/{id}")
     @DELETE
     @Transactional
+    @RolesAllowed("admin")
     public Response deletarProdutos(@RestPath Long id){
         produtosService.deletar(id);
         return Response

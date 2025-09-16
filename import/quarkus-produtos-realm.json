@@ -1,0 +1,51 @@
+{
+  "realm": "quarkus-produtos",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "quarkus-produtos-client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "redirectUris": ["http://localhost:8080/*"]
+    }
+  ],
+  "users": [
+    {
+      "username": "adminmaria",
+      "enabled": true,
+      "firstName": "Maria",
+      "lastName": "Admin",
+      "email": "admMaria@exemplo.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${MARIA_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin", "user"]
+    },
+    {
+      "username": "userjoao",
+      "enabled": true,
+      "firstName": "Joao",
+      "lastName": "User",
+      "email": "joaoUser@exemplo.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${JOAO_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["user"]
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "admin" },
+      { "name": "user" }
+    ]
+  }
+}
