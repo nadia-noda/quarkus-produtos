@@ -6,6 +6,8 @@ import ada.mod2.exception.IdNaoEncontrado;
 import ada.mod2.exception.NomeDeProdutoJaExiste;
 import ada.mod2.model.Produtos;
 import ada.mod2.repository.ProdutosRepository;
+import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;
 
 
@@ -14,12 +16,14 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class ProdutosService {
+
     private final ProdutosRepository repository;
     public ProdutosService(ProdutosRepository repository){
         this.repository = repository;
     }
 
-    private Produtos procurarPorId (Long id){
+    @CacheResult(cacheName = "produto-cache")
+    public Produtos procurarPorId (Long id){
         Produtos produtos = repository.procurarPorId(id);
         if (produtos == null){
             throw new IdNaoEncontrado(id);
@@ -42,6 +46,7 @@ public class ProdutosService {
         return produtos;
     }
 
+    @CacheResult(cacheName = "produtos-cache")
     public List<ProdutosDTO> consultarTodos(){
         return repository.findAll()
                 .list().stream().map(ProdutosMapper::toDTO).toList();
@@ -51,14 +56,18 @@ public class ProdutosService {
         return ProdutosMapper.toDTO(procurarPorId(id));
     }
 
+    @CacheInvalidate(cacheName = "produto-cache")
+    @CacheInvalidate(cacheName = "produtos-cache")
     public void atualizar(Long id, ProdutosDTO produtosDTO){
         Produtos produtos = procurarPorId(id);
-        if (produtosDTO.getNome() == produtos.getNome()){
+        if (produtosDTO.getNome().equals(produtos.getNome())){
             throw new NomeDeProdutoJaExiste(produtos.getNome());
         }
         ProdutosMapper.updateProdutos(produtosDTO,produtos);
     }
 
+    @CacheInvalidate(cacheName = "produto-cache")
+    @CacheInvalidate(cacheName = "produtos-cache")
     public void deletar(Long id){
         Produtos produtos = procurarPorId(id);
         repository.delete(produtos);

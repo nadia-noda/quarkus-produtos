@@ -4,6 +4,7 @@ import ada.mod2.model.Produtos;
 
 import ada.mod2.service.ProdutosService;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -76,7 +77,7 @@ public class ProdutosController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"admin","user"})
-
+    //@PermitAll
     public Response listarProdutos(){
         List<ProdutosDTO> produtos = produtosService.consultarTodos();
         return  Response
@@ -116,7 +117,7 @@ public class ProdutosController {
     @Path("/{id}")
     @DELETE
     @Transactional
-    @RolesAllowed("admin")
+    @RolesAllowed({"admin","user"})
     public Response deletarProdutos(@RestPath Long id){
         produtosService.deletar(id);
         return Response
